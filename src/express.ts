@@ -1,5 +1,5 @@
 import type { Store, CapturedResponse, IdempotencyEvent } from './types.js'
-import { processIdempotentKey } from './core.js'
+import { processIdempotentKey, parseTTL } from './core.js'
 
 interface ExpressRequest {
   headers: Record<string, string | string[] | undefined>
@@ -113,15 +113,4 @@ function captureExpressResponse(res: ExpressResponse, next: ExpressNext): Promis
   })
 }
 
-function parseTTL(ttl: string): number {
-  const match = ttl.match(/^(\d+)(h|m|d)$/)
-  if (!match) throw new Error(`Invalid TTL format: "${ttl}". Use e.g. "24h", "30m", "7d".`)
-  const value = Number.parseInt(match[1]!)
-  const unit = match[2]!
-  switch (unit) {
-    case 'h': return value * 60 * 60 * 1000
-    case 'm': return value * 60 * 1000
-    case 'd': return value * 24 * 60 * 60 * 1000
-    default: throw new Error(`Unexpected TTL unit: ${unit}`)
-  }
-}
+

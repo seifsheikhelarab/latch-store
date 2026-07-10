@@ -46,7 +46,7 @@ app.post('/charge', idempotentHono({ store }), async (c) => {
 
 ## API
 
-See the [generated documentation](https://your-org.github.io/latch-store) for the full API reference.
+See the [generated documentation](https://seifsheikhelarab.github.io/latch-store) for the full API reference.
 
 ### Store Adapters
 

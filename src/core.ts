@@ -122,7 +122,7 @@ async function handleExistingKey(
   return { status: 'conflict', statusCode: 409, headers: {}, body: JSON.stringify({ error: 'Timed out waiting for pending request' }) }
 }
 
-function sleep(ms: number): Promise<void> {
+export function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 

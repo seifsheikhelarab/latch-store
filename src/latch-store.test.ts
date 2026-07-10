@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'bun:test'
-import { processIdempotentKey, parseTTL } from './core.js'
+import { processIdempotentKey, parseTTL, sleep } from './core.js'
 import { memoryStore } from './memory-store.js'
 import { idempotentExpress } from './express.js'
 import { idempotentHono } from './hono.js'
@@ -234,6 +234,4 @@ describe('load test', () => {
   })
 })
 
-function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms))
-}
+

@@ -33,14 +33,13 @@
     "bench": "bun run src/benchmark.ts",
     "prepack": "bun run build"
   },
+  "peerDependencies": {
+    "ioredis": "^5.11.1"
+  },
   "devDependencies": {
     "@types/bun": "^1.3.14",
-    "@types/node": "^26.1.1",
     "bun-types": "^1.3.14",
     "hono": "^4.12.29",
     "typescript": "^7.0.2"
-  },
-  "dependencies": {
-    "ioredis": "^5.11.1"
   }
 }

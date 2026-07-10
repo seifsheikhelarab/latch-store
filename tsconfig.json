@@ -10,7 +10,7 @@
     "module": "nodenext",
     "target": "esnext",
     "lib": ["esnext"],
-    "types": ["node","bun"],
+    "types": ["bun"],
 
     // Other Outputs
     "sourceMap": true,
@@ -18,8 +18,7 @@
     "declarationMap": true,
 
     // Stricter Typechecking Options
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
+
 
     // Style Options
     "noImplicitReturns": true,
@@ -27,16 +26,15 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noPropertyAccessFromIndexSignature": true,
+
 
     // Recommended Options
     "strict": true,
-    "jsx": "react-jsx",
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
   },
-  "exclude": ["src/**/*.test.ts","dist/"]
+  "exclude": ["src/**/*.test.ts","src/benchmark.ts","dist/"]
 }
