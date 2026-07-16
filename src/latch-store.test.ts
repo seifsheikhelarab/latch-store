@@ -1,8 +1,7 @@
 import { describe, it, expect, beforeEach } from 'bun:test'
 import { processIdempotentKey, parseTTL, sleep } from './core.js'
 import { memoryStore } from './memory-store.js'
-import { idempotentExpress } from './express.js'
-import { idempotentHono } from './hono.js'
+import { idempotent } from './index.js'
 import type { Store, Entry, IdempotencyEvent } from './types.js'
 
 // ── TTL Parser ──
@@ -147,10 +146,10 @@ describe('processIdempotentKey', () => {
 
 // ── Express Middleware ──
 
-describe('idempotentExpress', () => {
+describe('idempotent.express', () => {
   it('passes through when no idempotency key', async () => {
     const store = memoryStore()
-    const middleware = idempotentExpress({ store })
+    const middleware = idempotent.express({ store })
     let nextCalled = false
     const req = { headers: {}, body: undefined, on: (_event: string, cb: any) => { if (_event === 'end') cb() } }
     const res = { status: () => res, json: () => res, send: () => res, setHeader: () => {}, headersSent: false }
@@ -160,7 +159,7 @@ describe('idempotentExpress', () => {
 
   it('completes a request with idempotency key', async () => {
     const store = memoryStore()
-    const middleware = idempotentExpress({ store })
+    const middleware = idempotent.express({ store })
     let statusCode = 0; let sentBody = ''
     const req = { headers: { 'idempotency-key': 'k1' }, body: {}, on: (_event: string, cb: any) => { if (_event === 'end') cb() } }
     const res = {
@@ -179,10 +178,10 @@ describe('idempotentExpress', () => {
 
 // ── Hono Middleware (unit) ──
 
-describe('idempotentHono', () => {
+describe('idempotent.hono', () => {
   it('passes through when no idempotency key', async () => {
     const store = memoryStore()
-    const middleware = idempotentHono({ store })
+    const middleware = idempotent.hono({ store })
     let nextCalled = false
     const c = {
       req: { header: () => undefined, text: async () => '' },
@@ -195,7 +194,7 @@ describe('idempotentHono', () => {
 
   it('replays captured response body', async () => {
     const store = memoryStore()
-    const middleware = idempotentHono({ store })
+    const middleware = idempotent.hono({ store })
     const c = {
       req: { header: (name: string) => name === 'Idempotency-Key' ? 'k1' : undefined, text: async () => '' },
       res: new Response('hello', { status: 200, headers: { 'content-type': 'text/plain' } }),

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'bun:test'
 import { Hono } from 'hono'
-import { idempotentHono } from './hono'
+import { idempotent } from './index'
 import { memoryStore } from './memory-store'
 import type { IdempotencyEvent } from './types'
 
@@ -9,7 +9,7 @@ describe('hono integration', () => {
     const store = memoryStore()
     const app = new Hono()
     let called = false
-    app.post('/test', idempotentHono({ store }), (c) => {
+    app.post('/test', idempotent.hono({ store }), (c) => {
       called = true
       return c.text('no key')
     })
@@ -25,7 +25,7 @@ describe('hono integration', () => {
     const events: IdempotencyEvent[] = []
     const app = new Hono()
     let handlerCount = 0
-    app.post('/test', idempotentHono({ store, onEvent: (e) => events.push(e) }), (c) => {
+    app.post('/test', idempotent.hono({ store, onEvent: (e) => events.push(e) }), (c) => {
       handlerCount++
       return c.text('first')
     })
@@ -48,7 +48,7 @@ describe('hono integration', () => {
     const events: IdempotencyEvent[] = []
     const app = new Hono()
     let handlerCount = 0
-    app.post('/test', idempotentHono({ store, onEvent: (e) => events.push(e) }), (c) => {
+    app.post('/test', idempotent.hono({ store, onEvent: (e) => events.push(e) }), (c) => {
       handlerCount++
       return c.text('charged')
     })
@@ -77,7 +77,7 @@ describe('hono integration', () => {
   it('body mismatch returns 409', async () => {
     const store = memoryStore()
     const app = new Hono()
-    app.post('/test', idempotentHono({ store }), (c) => c.text('ok'))
+    app.post('/test', idempotent.hono({ store }), (c) => c.text('ok'))
 
     const res1 = await app.request('/test', {
       method: 'POST',
@@ -98,7 +98,7 @@ describe('hono integration', () => {
   it('preserves response body on replay', async () => {
     const store = memoryStore()
     const app = new Hono()
-    app.post('/test', idempotentHono({ store }), (c) => c.json({ id: 42, ok: true }))
+    app.post('/test', idempotent.hono({ store }), (c) => c.json({ id: 42, ok: true }))
 
     const res1 = await app.request('/test', {
       method: 'POST',

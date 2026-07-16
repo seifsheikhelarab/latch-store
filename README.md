@@ -2,7 +2,7 @@
 
 **latch-store** is a Node/Bun middleware library that makes any mutating endpoint idempotent with one line of code. It provides:
 
-- **Two framework-specific entry points**: `idempotentExpress()` and `idempotentHono()`.
+- **Two framework-specific entry points**: `idempotent.express()` and `idempotent.hono()`.
 - **A pluggable store interface** with two built-in adapters: `memoryStore()` (dev/test) and `redisStore()` (production).
 - **Correctness guarantees** under concurrent duplicate requests via atomic store operations and polling.
 - **Body-hash mismatch detection** to reject key reuse with different payloads.
@@ -20,12 +20,12 @@ bun add latch-store
 ### Express
 
 ```ts
-import { idempotentExpress, memoryStore } from 'latch-store'
+import { idempotent, memoryStore } from 'latch-store'
 
 const store = memoryStore()
 const app = express()
 
-app.post('/charge', idempotentExpress({ store }), async (req, res) => {
+app.post('/charge', idempotent.express({ store }), async (req, res) => {
   // This handler runs at most once per unique Idempotency-Key
   res.json({ status: 'charged' })
 })
@@ -34,12 +34,12 @@ app.post('/charge', idempotentExpress({ store }), async (req, res) => {
 ### Hono
 
 ```ts
-import { idempotentHono, memoryStore } from 'latch-store'
+import { idempotent, memoryStore } from 'latch-store'
 
 const store = memoryStore()
 const app = new Hono()
 
-app.post('/charge', idempotentHono({ store }), async (c) => {
+app.post('/charge', idempotent.hono({ store }), async (c) => {
   return c.json({ status: 'charged' })
 })
 ```

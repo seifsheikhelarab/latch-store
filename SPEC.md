@@ -14,7 +14,7 @@ There is no small, dependency-light library that solves just this problem well. 
 
 Ship a Node/Bun middleware library (`latch-store`) that makes any mutating endpoint idempotent with one line of code. The library provides:
 
-- Two framework-specific entry points: `idempotentExpress()` and `idempotentHono()`.
+- Two framework-specific entry points: `idempotent.express()` and `idempotent.hono()`.
 - A pluggable store interface with two built-in adapters: `memoryStore()` (dev/test) and `redisStore()` (production).
 - Correctness guarantees under concurrent duplicate requests via atomic store operations and polling.
 - Body-hash mismatch detection to reject key reuse with different payloads.
@@ -41,7 +41,7 @@ Ship a Node/Bun middleware library (`latch-store`) that makes any mutating endpo
 16. As a backend engineer, I want handler errors to clean up the pending key, so that clients can retry with the same key after a transient failure.
 17. As a backend engineer, I want the response (status code, headers, body) to be fully cached and replayed, so that the client receives an identical response on retry.
 18. As a backend engineer, I want the middleware to buffer and hash the request body on every request, so that body mismatches on key reuse are always detected.
-19. As a backend engineer, I want to import everything from the root path (`import { idempotentExpress, memoryStore } from 'latch-store'`), so that imports are simple and consistent.
+19. As a backend engineer, I want to import everything from the root path (`import { idempotent, memoryStore } from 'latch-store'`), so that imports are simple and consistent.
 20. As a backend engineer, I want the library to be ESM-only with TypeScript, so that it works natively in Bun and with standard tooling in Node.
 21. As a backend engineer, I want the library to install with zero configuration beyond passing a store adapter, so that onboarding is instant.
 22. As a backend engineer, I want a load test in the test suite that proves 100 concurrent requests with the same key result in exactly one handler execution, so that the concurrency guarantee is verified automatically.
@@ -130,6 +130,7 @@ When no `Idempotency-Key` header is present, the middleware is a no-op — it ca
 ### Documentation
 
 Every exported function and interface in the public surface MUST have a JSDoc block describing:
+
 - What the function/method does (behaviour, not implementation).
 - Each parameter and its expected shape.
 - The return value and its shape.
@@ -137,8 +138,9 @@ Every exported function and interface in the public surface MUST have a JSDoc bl
 - Invariants or ordering constraints the caller must respect.
 
 JSDoc is required on:
+
 - `processIdempotentKey` (core module entry point).
-- `idempotentExpress` and `idempotentHono` (framework adapter entry points).
+- `idempotent.express` and `idempotent.hono` (framework adapter entry points).
 - `memoryStore` and `redisStore` (store adapter factory functions).
 - The `Store` interface (all four methods).
 - The `Entry` type and the `IdempotencyEvent` type.
@@ -149,6 +151,7 @@ Static documentation is generated from JSDoc using TypeDoc and published to GitH
 ### README
 
 A `README.md` at the project root, covering:
+
 - Problem statement (1–2 paragraphs).
 - Quick start: install, configure store, add middleware to an Express/Hono endpoint.
 - API reference summary (linking to the generated docs for full detail).
@@ -158,6 +161,7 @@ A `README.md` at the project root, covering:
 ### CI/CD
 
 GitHub Actions workflow (`.github/workflows/ci.yml`):
+
 - Trigger: push to `main`, pull requests targeting `main`.
 - Steps:
   1. Checkout.
@@ -176,7 +180,7 @@ Test external behavior, not implementation details. Each test should exercise th
 
 ### Modules to Test
 
-1. **Core idempotency logic** — tested via the `idempotentExpress` and `idempotentHono` functions against the in-memory store. Covers:
+1. **Core idempotency logic** — tested via the `idempotent.express` and `idempotent.hono` functions against the in-memory store. Covers:
    - First request creates entry, runs handler, stores response.
    - Concurrent duplicate blocks, returns stored response, handler runs once.
    - Post-completion duplicate returns cached response, handler does not run.

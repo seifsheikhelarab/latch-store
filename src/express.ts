@@ -31,9 +31,9 @@ export interface IdempotentExpressOptions {
  *
  * @example
  * ```ts
- * import { idempotentExpress, memoryStore } from 'latch-store'
+ * import { idempotent, memoryStore } from 'latch-store'
  * const store = memoryStore()
- * app.post('/charge', idempotentExpress({ store }), handler)
+ * app.post('/charge', idempotent.express({ store }), handler)
  * ```
  */
 export function idempotentExpress(options: IdempotentExpressOptions) {
@@ -66,15 +66,17 @@ export function idempotentExpress(options: IdempotentExpressOptions) {
 
 function bufferRequestBody(req: ExpressRequest): Promise<Uint8Array> {
   return new Promise(resolve => {
+    if (req.body !== undefined) {
+      if (Buffer.isBuffer(req.body)) return resolve(new Uint8Array(req.body))
+      if (typeof req.body === 'string') return resolve(new TextEncoder().encode(req.body))
+      return resolve(new TextEncoder().encode(JSON.stringify(req.body)))
+    }
+
     const chunks: Buffer[] = []
     req.on('data', (chunk: Buffer) => chunks.push(chunk))
     req.on('end', () => {
       if (chunks.length > 0) {
         resolve(new Uint8Array(Buffer.concat(chunks)))
-      } else if (req.body !== undefined) {
-        if (Buffer.isBuffer(req.body)) resolve(new Uint8Array(req.body))
-        else if (typeof req.body === 'string') resolve(new TextEncoder().encode(req.body))
-        else resolve(new TextEncoder().encode(JSON.stringify(req.body)))
       } else {
         resolve(new Uint8Array())
       }

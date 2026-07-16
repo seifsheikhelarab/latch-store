@@ -26,9 +26,9 @@ export interface IdempotentHonoOptions {
  *
  * @example
  * ```ts
- * import { idempotentHono, memoryStore } from 'latch-store'
+ * import { idempotent, memoryStore } from 'latch-store'
  * const store = memoryStore()
- * app.post('/charge', idempotentHono({ store }), handler)
+ * app.post('/charge', idempotent.hono({ store }), handler)
  * ```
  */
 export function idempotentHono(options: IdempotentHonoOptions) {
