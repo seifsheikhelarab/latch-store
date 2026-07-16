@@ -7,8 +7,9 @@ import type { Store, Entry, IdempotencyEvent } from './types.js'
 // ── TTL Parser ──
 
 describe('parseTTL', () => {
-  it('parses hours', () => { expect(parseTTL('1h')).toBe(3_600_000) })
+  it('parses seconds', () => { expect(parseTTL('30s')).toBe(30_000) })
   it('parses minutes', () => { expect(parseTTL('30m')).toBe(1_800_000) })
+  it('parses hours', () => { expect(parseTTL('1h')).toBe(3_600_000) })
   it('parses days', () => { expect(parseTTL('7d')).toBe(604_800_000) })
   it('defaults to 24h', () => { expect(parseTTL('24h')).toBe(86_400_000) })
   it('rejects invalid format', () => { expect(() => parseTTL('abc')).toThrow() })

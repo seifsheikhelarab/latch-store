@@ -1,6 +1,6 @@
 {
   "name": "latch-store",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Idempotency middleware for your HTTP framework",
   "license": "MIT",
   "author": "seifsheikhelarab",

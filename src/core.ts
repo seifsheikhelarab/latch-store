@@ -5,13 +5,14 @@ const POLL_INTERVAL_MS = 50
 const POLL_TIMEOUT_MS = 30_000
 
 function parseTTL(ttl: string): number {
-  const match = ttl.match(/^(\d+)(h|m|d)$/)
-  if (!match) throw new Error(`Invalid TTL format: "${ttl}". Use e.g. "24h", "30m", "7d".`)
+  const match = ttl.match(/^(\d+)(s|m|h|d)$/)
+  if (!match) throw new Error(`Invalid TTL format: "${ttl}". Use e.g. "30s", "5m", "24h", "7d".`)
   const value = Number.parseInt(match[1]!)
   const unit = match[2]!
   switch (unit) {
-    case 'h': return value * 60 * 60 * 1000
+    case 's': return value * 1000
     case 'm': return value * 60 * 1000
+    case 'h': return value * 60 * 60 * 1000
     case 'd': return value * 24 * 60 * 60 * 1000
     default: throw new Error(`Unexpected TTL unit: ${unit}`)
   }

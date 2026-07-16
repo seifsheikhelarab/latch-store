@@ -9,6 +9,7 @@ const timers = new Map<string, ReturnType<typeof setTimeout>>()
  */
 export function memoryStore(): Store {
   const data = new Map<string, Entry>()
+  const pending = new Set<string>()
 
   function scheduleExpiry(key: string, ttlMs: number): void {
     const existing = timers.get(key)
@@ -18,9 +19,11 @@ export function memoryStore(): Store {
 
   return {
     async setIfAbsent(key, value, ttlMs) {
-      if (data.has(key)) return false
+      if (data.has(key) || pending.has(key)) return false
+      pending.add(key)
       data.set(key, value)
       scheduleExpiry(key, ttlMs)
+      pending.delete(key)
       return true
     },
 
